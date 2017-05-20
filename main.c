@@ -6,14 +6,19 @@ int main()
     int i = 0;
     struct rb_root * root = NULL;
     root = rbtree_init();
-     
-    for (i = 0; i < sizeof(a); i++)
+    printf(" a= = %d\n", sizeof(a)); 
+    for (i = 0; i < sizeof(a)/4; i++)
         rbtree_insert(root, a[i]);
 
     rbtree_trav(root);
-
-    for (i = 0; i < sizeof(a); i++)
-        rbtree_erase(root, a[i]);    
+    printf("\n\n");
+    for (i = 0; i < sizeof(a)/4; i++)
+    {
+        printf(" key = %d\n", a[i]);
+        rbtree_erase(root, a[i]);   
+        rbtree_trav(root);
+        printf("\n");
+    } 
     rbtree_destroy(root);
     return 0;
 }

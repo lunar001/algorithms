@@ -24,23 +24,23 @@ int rbtree_destroy(struct rb_root* rbroot)
 void rbtree_insert(struct rb_root* rbroot, int key)
 {
     struct TestNode * new = NULL;
-    struct rb_node * tr = rbroot->rb_node;
+    struct rb_node ** tr = &(rbroot->rb_node);
     struct rb_node * p = NULL;
     struct TestNode * tmp = NULL;
     new = (struct TestNode *)malloc(sizeof(struct TestNode));
     memset(new, 0, sizeof(struct rb_node));
     new->key = key;
-    while(tr)
+    while(*tr)
     {
-        p = tr;
-        tmp = rb_entry(tr,struct TestNode, rbnode);
+        p = *tr;
+        tmp = rb_entry(*tr,struct TestNode, rbnode);
         if(tmp->key < new->key)
-           tr = tr->rb_right;
+           tr =&( (*tr)->rb_right);
         else
-           tr = tr->rb_left;  
+           tr =&((* tr)->rb_left);  
     }
     
-    rb_link_node(&(new->rbnode), p, &tr);
+    rb_link_node(&(new->rbnode), p, tr);
     rb_insert_color(&(new->rbnode),rbroot);
 }
 
@@ -51,7 +51,7 @@ void  rbtree_erase(struct rb_root* rbroot, int key)
     while(tr)
     {
         tmp = rb_entry(tr, struct TestNode, rbnode); 
-        if(tmp->key = key)
+        if(tmp->key == key)
             break;
         if(tmp->key < key)
             tr = tr->rb_right;
