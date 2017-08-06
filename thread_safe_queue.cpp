@@ -7,7 +7,7 @@ template<typename T>
 void ThreadSafeQueue<T>::WaitAndPop(T &value)
 {
 	std::unique_lock<std::mutex> lk(mx_);
-	cond_.wait(lk, [this] () { return !data_queue_.empty(); };
+	cond_.wait(lk, [this] () { return !data_queue_.empty(); });
 	/* move copy assign*/
 	value = std::move(*data_queue_.front());
 	data_queue_.pop();
