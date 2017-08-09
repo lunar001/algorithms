@@ -5,21 +5,21 @@ namespace ThreadPool
 
 ThreadPool::ThreadPool():
 	done_(false), joiner_(threads_)
+{
+	unsigned const thread_count = std::thread::hardware_concurrency();
+	try
 	{
-		unsigned const thread_count = std::thread::hardware_concurrency();
-		try
+		for( unsigned i = 0; i < thread_count; ++i)
 		{
-			for( unsigned i = 0; i < thread_count; ++i)
-			{
-				threads_.push_back(std::thread(&ThreadPool::WorkThread, this));
-			}
-		}
-		catch (const std::exception &e)
-		{
-			done_ = true;
-			throw;
+			threads_.push_back(std::thread(&ThreadPool::WorkThread, this));
 		}
 	}
+	catch (const std::exception &e)
+	{
+		done_ = true;
+		throw;
+	}
+}
 
 ThreadPool::~ThreadPool()
 {
