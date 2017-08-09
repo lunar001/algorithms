@@ -7,12 +7,22 @@ template<typename T>
 void ThreadSafeQueue<T>::WaitAndPop(T &value)
 {
 	std::unique_lock<std::mutex> lk(mx_);
-	cond_.wait(lk, [this] () { return !data_queue_.empty(); };
+	cond_.wait(lk, [this] () { return !data_queue_.empty(); });
 	/* move copy assign*/
 	value = std::move(*data_queue_.front());
 	data_queue_.pop();
 }
 
+template <typename T>
+std::shared_ptr<T> ThreadSafeQueue<T>::TryPop()
+{
+	std::lock_guard<std::mutex> lk(mx_);
+	if(data_queue_.empty())
+		return std::shared_ptr<T>();
+	std::shared_ptr<T> res = data_queue_.front();
+	data_queue_.pop();
+	return res;
+}
 template<typename T>
 bool ThreadSafeQueue<T>::TryPop(T & value)
 {
@@ -23,22 +33,20 @@ bool ThreadSafeQueue<T>::TryPop(T & value)
 	data_queue_.pop();
 	return true;
 }
-
 template<typename T>
-void ThreadSafeQueue<T> Push(T new_value)
+void ThreadSafeQueue<T>::Push(T new_value)
 {
 	std::shared_ptr<T> data(
-			std::make_shared<T>(std::move(new_value));
+			std::make_shared<T>(std::move(new_value)));
 	std::lock_guard<std::mutex> lk(mx_);
 	data_queue_.push(data);
 	cond_.notify_one();
 }
 
 template<typename T>
-bool ThreadSafeQueue<T> Empty() const
+bool ThreadSafeQueue<T>::Empty() const
 {
 	std::lock_guard<std::mutex> lk(mx_);
 	return data_queue_.empyt();
 }
-
-}/* end of namespace */
+}

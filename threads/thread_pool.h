@@ -1,9 +1,12 @@
 #ifndef H_THREAD_POOL_H
 #define H_THREAD_POOL_H
 
-#include <atomic.h>
+#include "common.h"
+#include "thread_safe_queue.h"
+#include "join_thread.h"
+#include <thread>
 
-namespace threadpool
+namespace ThreadPool
 {
 
 class ThreadPool
@@ -19,7 +22,7 @@ private:
     std::atomic_bool done_;
     ThreadSafeQueue<std::function<void()> > work_queue_;
     std::vector<std::thread> threads_;
-    JoinThreads joiner_;
+    JoinThread joiner_;
 
     void WorkThread();
 };

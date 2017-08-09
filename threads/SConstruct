@@ -1,0 +1,4 @@
+env=Environment()
+env.Append(CXXFLAGS="-std=c++11")
+env.Append(CPPPATH=".")
+env.Library(target='ThreadPool', source=Glob('*.cpp'))
